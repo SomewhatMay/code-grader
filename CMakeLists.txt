@@ -6,7 +6,7 @@ project(code-grader)
 add_executable(
 	code-grader
 	src/main.cpp
-	src/file-io/file-input.cpp
+	src/file-input.cpp
 )
 
 target_include_directories(

@@ -3,6 +3,6 @@
 
 using std::string;
 
-namespace constants {
-constexpr char* QUESTIONS_PATH = "../resources/questions";
-}  // namespace constants
+namespace globals {
+constexpr const char* QUESTIONS_PATH = "./resources/questions/";
+}  // namespace globals
