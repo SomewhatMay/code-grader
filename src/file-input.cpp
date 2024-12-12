@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 #include "globals.h"
 
@@ -43,7 +44,11 @@ std::vector<test_case> get_test_cases(std::string question_id) {
   std::string line;
   parse_status status = SEARCHING_FOR_TITLE;
   while (std::getline(question_file, line)) {
-    if (SEARCHING_FOR_TITLE) {
-        }
+    if (status == SEARCHING_FOR_TITLE) {
+      auto titleTag = std::find(line.cbegin(), line.cend(), '#');
+      
+      // Ensure that this is not a description tag instead
+      auto descTag = std::find(titleTag + 1, line.cend(), '#');
+    }
   }
 }
