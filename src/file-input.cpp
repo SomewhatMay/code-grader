@@ -44,6 +44,8 @@ std::vector<test_case> get_test_cases(std::string question_id) {
   std::string line;
   parse_status status = SEARCHING_FOR_TITLE;
   while (std::getline(question_file, line)) {
+    std::erase()
+
     if (status == SEARCHING_FOR_TITLE) {
       auto titleTag = std::find(line.cbegin(), line.cend(), '#');
       
