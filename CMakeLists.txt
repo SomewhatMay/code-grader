@@ -7,6 +7,7 @@ add_executable(
 	code-grader
 	src/main.cpp
 	src/file-input.cpp
+	src/pipe-handler.cpp
 )
 
 target_include_directories(
