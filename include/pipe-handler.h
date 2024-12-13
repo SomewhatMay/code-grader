@@ -1,55 +1,36 @@
 #pragma once 
 
-#include <iostream>
 #include <string>
+#include <cstring>
+#include <iostream>
 #include <cstdlib>
 
-//creating a struct to store the both streams for the pipe we want to create
-struct Pipe {
-    FILE* read;
-    FILE* write;
-};
 
 /*
 
-returns a pointer to a stream than can be used to read and write to the pipe, 
+input params: 
+* input -> takes input string that you want to write to standard stream,
+* program_name -> name of program to write to
 
-has two modes r for reading and w for writting, the function expects:
+purpose:
+* writes to the standard stream of the program passed in
+* returns the output from the standard stream of the program as a string 
 
-"write" or "read" for the respective pointer to the stream that it is creating 
-
+Dependecies:
+*assumes that the program is fully functional and doesnt segfault
+*assumes that program is already compiled
 */
-FILE* establish_pipe(std::string executable_name, std::string mode);
-
-/*
-
-takes in the pointer to the stream, and tries to read from it 
-
-is expecting a stream that has reading mode enabled and will throw if it recieves a stream with type write
-
-returns a string with what the program outputted
-
-*/
-std::string read_from_stream(FILE* stream);
-
+std::string process_program(std::string input, std::string program_name);
 
 
 /*
 
-takes in the pointer to the stream, and tries to write to it 
+input params:
+* pipe -> takes in a pointer to the stream opened by the pipe
 
-is expecting a stream that has writting mode enabled and will throw if it recieves a stream with type read
-
-returns nothing, simply will throw if the write was not successful 
-*/
-void write_to_stream(FILE* stream);
-
-
-/*
-
-closes any pipes that were opened previously
-
-returns nothing, simply will throw if closing the pipe was not successful 
+purpose:
+* takes the data from the stream stores it in a buffer
+* converts the buffer to an std::string then returns the string 
 
 */
-void close_pipe(FILE* stream);
+std::string stream_pipe_data(FILE* pipe);
