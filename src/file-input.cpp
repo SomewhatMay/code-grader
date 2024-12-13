@@ -87,19 +87,50 @@ parse_result get_description(const std::string &line) {
     ltrim(desc);  // title is already trimmed on the right
 
     return parse_result(desc);
-  } else {
+  } else if (line[0] == '#') { 
+    return parse_result(false, "Unexpected title with '#'. Did you mean to start a description with '##'");
+   }else {
     return parse_result(false, "no-description");
   }
 }
 
-parse_result get_input(const std::string &line) {
-  remove_all_whitespace(line);
+/**
+ * @return pair<string, bool>
+ * string first -> parsed input line (excluding closing tag)
+ * bool second -> true iff last line of input
+ */
+std::pair<std::string, bool> get_line_input(const std::string &line) {
+  auto end_bracket_it = std::find(line.cbegin(), line.cend(), ']');
 
-  if (line[0] != 'i') {
+  if (end_bracket_it == line.cend()) {
+    // This is not the final line of the inputs
+    return std::pair(line, false);
+  } else {
+    // This is fhe final line
+    return std::pair(line.substr(0, line.cend() - end_bracket_it), true);
+  }
+}
+
+parse_result get_input(const std::string &line, const bool &tag_found) {
+  std::string input = line;
+  if (!tag_found && line[0] != 'i') {
     return parse_result(false, "Expected input list. Instead found '" +
                                    shorten_line(line) + "'");
-  } else {
+  } else if (!tag_found) {
+    // Find the opening bracket
+    auto open_bracket_it = std::find(line.cbegin(), line.cend(), '[');
+    if (open_bracket_it == line.cend()) {
+      return parse_result(false, "Expected '[' but no opening bracket");
+    }
+    
+    // remove the opening bracket and everything before it
+    input = line.substr(open_bracket_it - line.cbegin() + 1);
+    auto [parsed_line, final] = get_line_input(input);
+
+    
   }
+
+  // tag found
 }
 
 std::vector<test_case> get_test_cases(std::string question_id) {
