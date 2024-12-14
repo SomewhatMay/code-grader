@@ -12,9 +12,11 @@ if (ENABLE_TESTS)
 	# Add the test executable
 	add_executable(
 		code-grader-tests
-		tests/main.cpp
-		# src/main.cpp
-		src/file-input.cpp
+
+		src/file-input/parser.cpp
+		src/file-input/file-retriever.cpp
+
+		tests/file-input/parser.cpp
 	)
 
 	target_include_directories(
@@ -33,7 +35,8 @@ else()
 	add_executable(
 		code-grader
 		src/main.cpp
-		src/file-input.cpp
+		src/file-input/parser.cpp
+		src/file-input/file-retriever.cpp
 	)
 
 	target_include_directories(

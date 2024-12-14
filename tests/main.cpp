@@ -1,3 +1,3 @@
 #include "gtest/gtest.h"
 
-TEST(MainTest, Multiply) {}
+TEST(MainTest, Multiply) { ASSERT_EQ(true, true) << "Hello world!"; }
