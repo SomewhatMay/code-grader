@@ -1,5 +1,13 @@
+# Title with spaces
+	desc = "description and notes"
 
-# Title with Spaces
-## description and notes
-i[0, 1, 2]
-o[0, 2, 4]
+	inputs = [1 2 3]
+	outputs = [2 4 6]
+#
+
+# Another test here
+	desc = "This is just a second test"
+
+	inputs = [-1 10 0]
+	outputs = [-2 20 0]
+#

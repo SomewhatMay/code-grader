@@ -15,7 +15,7 @@ std::vector<std::string> get_question_list() {
   std::vector<std::string> question_list;
   fs::directory_iterator iterator(globals::QUESTIONS_PATH);
 
-  for (const auto &entry : iterator) {
+  for (const auto& entry : iterator) {
     if (entry.is_directory()) {
       std::string question_id = entry.path().filename().string();
       question_list.push_back(question_id);
@@ -25,116 +25,40 @@ std::vector<std::string> get_question_list() {
   return question_list;
 }
 
-/////////////////////////////////////
-// Parser
-/////////////////////////////////////
+/////////////////////
+//////  Parser  /////
+/////////////////////
 
-enum parse_status {
-  SEARCHING_FOR_TITLE,
-  IN_TITLE,  // Either looking for description or inputs
-  INPUT_FOUND,
-  OUTPUT_FOUND,
-  ERROR
-};
+enum parse_status { SEARCH_TEST, IN_TEST, IN_INPUT, IN_OUTPUT, ERROR };
 
-struct parse_result {
-  // whether the result was a success.
-  bool status;
-
- private:
-  // the returned information from the parser. Empty if unsuccessful.
-  std::string _data;
-  // error information
-  std::string _what;
-
- public:
-  parse_result(bool status, std::string what, std::string data)
-      : status(status), _data(std::move(data)), _what(std::move(what)) {}
-
-  parse_result(std::string data)
-      : status(true), _data(std::move(data)), _what("") {}
-
-  parse_result(bool status, std::string what)
-      : status(status), _data(""), _what(std::move(what)) {}
-
-  std::string what() { return _what; }
-
-  std::string data() { return _data; }
-};
-
-void malformed_error(const std::string question_id, const std::string &what) {
-  std::cerr << "Malformed question '" << question_id << "': " << what << '\n';
+void malformed_error(const std::string question_id, const int& line_number,
+                     const std::string& what) {
+  std::cerr << "Malformed question '" << question_id << "' [line "
+            << line_number << "] : " << what << '\n';
 }
 
-parse_result get_title(const std::string &line) {
-  if (line[0] == '#') {
-    if (line[1] == '#') {
-      return parse_result(false,
-                          "Found standalone description tag. Did you mean to "
-                          "use '#' instead of '##' to denote a title?");
-    }
+parse_result get_heading(std::string line) {
+  ltrim(line);
 
+  if (line[0] == '#') {
     std::string title = line.substr(1);
-    ltrim(title);  // title is already trimmed on the right
+    ltrim(title);
 
     return parse_result(title);
   }
-}
 
-parse_result get_description(const std::string &line) {
-  if (line[0] == '#' && line[1] == '#') {
-    std::string desc = line.substr(2);
-    ltrim(desc);  // title is already trimmed on the right
-
-    return parse_result(desc);
-  } else if (line[0] == '#') { 
-    return parse_result(false, "Unexpected title with '#'. Did you mean to start a description with '##'");
-   }else {
-    return parse_result(false, "no-description");
-  }
+  return parse_result(false, "expected test case title.");
 }
 
 /**
- * @return pair<string, bool>
- * string first -> parsed input line (excluding closing tag)
- * bool second -> true iff last line of input
+ * Line must be a valid description line.
  */
-std::pair<std::string, bool> get_line_input(const std::string &line) {
-  auto end_bracket_it = std::find(line.cbegin(), line.cend(), ']');
+parse_result get_desc(std::string line) { ltrim(line); }
 
-  if (end_bracket_it == line.cend()) {
-    // This is not the final line of the inputs
-    return std::pair(line, false);
-  } else {
-    // This is fhe final line
-    return std::pair(line.substr(0, line.cend() - end_bracket_it), true);
-  }
-}
-
-parse_result get_input(const std::string &line, const bool &tag_found) {
-  std::string input = line;
-  if (!tag_found && line[0] != 'i') {
-    return parse_result(false, "Expected input list. Instead found '" +
-                                   shorten_line(line) + "'");
-  } else if (!tag_found) {
-    // Find the opening bracket
-    auto open_bracket_it = std::find(line.cbegin(), line.cend(), '[');
-    if (open_bracket_it == line.cend()) {
-      return parse_result(false, "Expected '[' but no opening bracket");
-    }
-    
-    // remove the opening bracket and everything before it
-    input = line.substr(open_bracket_it - line.cbegin() + 1);
-    auto [parsed_line, final] = get_line_input(input);
-
-    
-  }
-
-  // tag found
-}
-
-std::vector<test_case> get_test_cases(std::string question_id) {
+std::vector<test_case> get_test_cases(std::string& question_id) {
   std::vector<test_case> test_cases;
+
+  // Open the file stream
   std::ifstream question_file(std::string(globals::QUESTIONS_PATH) +
                               question_id);
 
@@ -144,30 +68,49 @@ std::vector<test_case> get_test_cases(std::string question_id) {
   }
 
   std::string line;
-  parse_status status = SEARCHING_FOR_TITLE;
+  int line_number = 0;
+  parse_status current_status = parse_status::SEARCH_TEST;
+  parse_result result(
+      false,
+      "fatal: code not executed");  // most recent parse_result from parsing
   test_case current_case;
-  while (status != parse_status::ERROR && std::getline(question_file, line)) {
-    // skip if line is empty
+  while (getline(question_file, line) &&
+         current_status != parse_status::ERROR) {
+    line_number++;
+
+    // Skip line if it is empty
     std::string printable_only_line = remove_all_whitespace(line);
     if (printable_only_line.length() == 0) {
       continue;
     }
 
-    trim(line);
+    if (current_status == parse_status::SEARCH_TEST) {
+      result = get_heading(line);
 
-    // line contains information
-    if (status == SEARCHING_FOR_TITLE) {
-      parse_result title_result = get_title(line);
+      if (!result.status) {
+        current_status = parse_status::ERROR;
+        break;
+      }
 
-      if (title_result.status == true) {
-        current_case.title = title_result.data();
-        status = parse_status::IN_TITLE;
-      } else {
-        malformed_error(question_id, title_result.what());
-        status = parse_status::ERROR;
+      current_case.title = result.data();
+      current_status = parse_status::IN_INPUT;
+    } else if (current_status == parse_status::IN_INPUT) {
+      std::string trimmed_line = line;
+      ltrim(line);
+
+      // If line starts with "desc"...
+      if (trimmed_line.rfind("desc", 0) == 0) {
+        parse_result result = get_desc(line);
       }
     }
+
+    // TODO remember to append the case
   }
 
-  return test_cases;
+  if (current_status == parse_status::ERROR) {
+    malformed_error(question_id, line_number, result.what());
+    return std::vector<test_case>();
+  } else {
+    return test_cases;
+  }
 }
