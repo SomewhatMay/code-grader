@@ -51,7 +51,24 @@
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
 		"typeinfo": "cpp",
-		"filesystem": "cpp"
+		"filesystem": "cpp",
+		"any": "cpp",
+		"condition_variable": "cpp",
+		"csignal": "cpp",
+		"cstring": "cpp",
+		"forward_list": "cpp",
+		"list": "cpp",
+		"map": "cpp",
+		"set": "cpp",
+		"unordered_set": "cpp",
+		"optional": "cpp",
+		"mutex": "cpp",
+		"semaphore": "cpp",
+		"span": "cpp",
+		"stop_token": "cpp",
+		"thread": "cpp",
+		"cinttypes": "cpp",
+		"variant": "cpp"
 	},
 	"C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

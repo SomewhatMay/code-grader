@@ -1,33 +1,11 @@
-#include "file-input.h"
+#include "file-input/parser.h"
 
 #include <algorithm>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 
 #include "globals.h"
 #include "string-utils.h"
-
-namespace fs = std::filesystem;
-
-std::vector<std::string> get_question_list() {
-  // Change this line to use an absolute or relative path as needed
-  std::vector<std::string> question_list;
-  fs::directory_iterator iterator(globals::QUESTIONS_PATH);
-
-  for (const auto& entry : iterator) {
-    if (entry.is_directory()) {
-      std::string question_id = entry.path().filename().string();
-      question_list.push_back(question_id);
-    }
-  }
-
-  return question_list;
-}
-
-/////////////////////
-//////  Parser  /////
-/////////////////////
 
 enum parse_status { SEARCH_TEST, IN_TEST, IN_INPUT, IN_OUTPUT, ERROR };
 
@@ -47,7 +25,7 @@ parse_result get_heading(std::string line) {
     return parse_result(title);
   }
 
-  return parse_result(false, "expected test case title.");
+  return parse_result(false, "expected test case title");
 }
 
 /**

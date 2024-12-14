@@ -15,12 +15,6 @@ struct test_case {
 };
 
 /**
- * Return a vector of `question_id`s based on the names
- * of each question in the resources/questions folder.
- */
-std::vector<std::string> get_question_list();
-
-/**
  * Return a vector of test cases in the question with name
  * `question_id`.
  *
@@ -66,3 +60,7 @@ struct parse_result {
 
   std::string data() { return _data; }
 };
+
+parse_result get_heading(std::string line);
+
+parse_result get_desc(std::string line);
