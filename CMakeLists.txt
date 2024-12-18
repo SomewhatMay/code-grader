@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.23)
 
 project(code-grader)
 
 option(ENABLE_TESTS "Enable test build" ON)
 
 add_subdirectory(external/json)
+add_subdirectory(external/expected)
 
 if (ENABLE_TESTS)
 	# Add Google Test as a submodule
@@ -33,6 +34,7 @@ if (ENABLE_TESTS)
 		gtest
 		gtest_main
 		nlohmann_json::nlohmann_json
+		zeus_expected::zeus
 	)
 
 	enable_testing()
@@ -55,5 +57,6 @@ else()
 	target_link_libraries(
 		code-grader 
         nlohmann_json::nlohmann_json
+		zeus_expected::zeus
     )
 endif()
