@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Natural Numbers",
+        "description": "Regular test for some numbers",
+        "inputs": "3\n3\n6\n1",
+        "outputs": "10\n18"
+    },
+    {
+        "title": "Negative numbers",
+        "description": "Try something a bit more spicy",
+        "inputs": ["4", "0", "-1", "-10", "-2"],
+        "outputs": ["-13", "0"]
+    }
+]
