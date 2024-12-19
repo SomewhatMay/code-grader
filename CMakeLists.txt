@@ -37,7 +37,7 @@ if (ENABLE_TESTS)
 		gtest
 		gtest_main
 		nlohmann_json::nlohmann_json
-		# zeus_expected::zeus
+		zeus::expected
 	)
 
 	enable_testing()
@@ -60,6 +60,6 @@ else()
 	target_link_libraries(
 		code-grader 
   	nlohmann_json::nlohmann_json
-		# zeus_expected::zeus
+		zeus::expected
   )
 endif()

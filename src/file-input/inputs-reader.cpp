@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <zeus/expected.hpp>
 
 using json = nlohmann::json;
 
@@ -27,38 +28,33 @@ json read_questions_file(const std::string& question_id) {
   return data;
 }
 
-template <typename T>
-struct result_t {
- private:
-  bool status_;
-  T data_;
-
- public:
-  result_t(bool status, T data) : status_(status), data_(data) {}
-
-  bool status() { return status_; }
-
-  T data() { return data_; }
-};
-
-result_t<std::string> parse_io(const json& raw) {
-  std::string parsed = "";
-
+zeus::expected<std::string, std::string> parse_io(const json& raw) {
   if (raw.is_string()) {
-    parsed = raw;
+    return raw;
+  } else if (raw.is_number()) {
+    return std::to_string(raw.is_number_float() ? (float)raw : (int)raw);
   } else if (raw.is_array()) {
+    std::string parsed = "";
+
     for (auto it = raw.begin(); it != raw.end(); it++) {
       if (it != raw.begin()) {
         parsed += '\n';
       }
 
-      parsed += std::string(*it);
+      if (it->is_string()) {
+        parsed += *it;
+      } else if (it->is_number()) {
+        parsed += std::to_string(it->is_number_float() ? (float)*it : (int)*it);
+      } else {
+        return zeus::unexpected("element " + std::to_string(it - raw.begin()) +
+                                " is unparsable in test case");
+      }
     }
-  } else {
-    return result_t<std::string>(false, "");
-  }
 
-  return result_t<std::string>(true, parsed);
+    return parsed;
+  } else {
+    return zeus::unexpected("raw is unparsable");
+  }
 }
 
 test_case parse_test_case(const json& entry) {
@@ -68,10 +64,23 @@ test_case parse_test_case(const json& entry) {
   current_case.description =
       entry.at("description").is_string() ? entry.at("description") : "";
 
-  auto raw_inputs = entry.at("inputs");
-  std::string inputs = "";
+  zeus::expected<std::string, std::string> inputs =
+      parse_io(entry.at("inputs"));
+  if (inputs.has_value()) {
+    current_case.inputs = *inputs;
+  } else {
+    std::cerr << "Unable to parse inputs for test case - " << inputs.error()
+              << "\n";
+  }
 
-  current_case.inputs = inputs;
+  zeus::expected<std::string, std::string> outputs =
+      parse_io(entry.at("outputs"));
+  if (outputs.has_value()) {
+    current_case.outputs = *outputs;
+  } else {
+    std::cerr << "Unable to parse outputs for test case - " << outputs.error()
+              << "\n";
+  }
 
   return current_case;
 }
