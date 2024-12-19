@@ -5,6 +5,7 @@ project(code-grader)
 option(ENABLE_TESTS "Enable test build" ON)
 
 add_subdirectory(external/json)
+add_subdirectory(external/Catch2)
 add_subdirectory(external/expected)
 
 if (ENABLE_TESTS)
@@ -16,9 +17,11 @@ if (ENABLE_TESTS)
 	add_executable(
 		code-grader-tests
 		src/file-input/file-retriever.cpp
+		src/file-input/inputs-reader.cpp
 
 		tests/main.cpp
 		tests/file-input/json-test.cpp
+		tests/file-input/inputs-reader.cpp
 	)
 
 	target_include_directories(
@@ -34,7 +37,7 @@ if (ENABLE_TESTS)
 		gtest
 		gtest_main
 		nlohmann_json::nlohmann_json
-		zeus_expected::zeus
+		# zeus_expected::zeus
 	)
 
 	enable_testing()
@@ -56,7 +59,7 @@ else()
 
 	target_link_libraries(
 		code-grader 
-        nlohmann_json::nlohmann_json
-		zeus_expected::zeus
-    )
+  	nlohmann_json::nlohmann_json
+		# zeus_expected::zeus
+  )
 endif()
