@@ -9,6 +9,7 @@
 
 using json = nlohmann::json;
 
+namespace fio {
 json read_questions_file(const std::string& question_id) {
   std::string total_path = std::string(globals::QUESTIONS_PATH) + question_id;
   std::ifstream questions_file(total_path);
@@ -95,3 +96,4 @@ std::vector<test_case> parse_test_cases(const json& data) {
 std::vector<test_case> get_test_cases(const std::string& question_id) {
   return std::vector<test_case>();
 };
+}  // namespace fio

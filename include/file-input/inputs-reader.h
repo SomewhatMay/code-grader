@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+// fio --> fileIO
+namespace fio {
 /**
  * Contain the format of a test case as defined
  * in the question files.
@@ -33,3 +35,4 @@ std::vector<test_case> parse_test_cases(const nlohmann::json& data);
  * the .what() in the stdout.
  */
 std::vector<test_case> get_test_cases(const std::string& question_id);
+}

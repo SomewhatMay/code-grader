@@ -3,12 +3,20 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
+#include <zeus/expected.hpp>
 
 #include "gtest/gtest.h"
 #include "stdio.h"
 
 using namespace nlohmann::literals;
 using json = nlohmann::json;
+using namespace fio;
+
+// parse_io()
+
+TEST(ParseIO, EmptyString) {}
+
+// parse_test_cases();
 
 TEST(ParseTestCases, SingleLineIO) {
   std::vector<test_case> result = parse_test_cases(json::parse(R"(
