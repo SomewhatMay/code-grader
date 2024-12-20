@@ -79,6 +79,60 @@ TEST(ParseTestCases, MultiLineNumberIO) {
   EXPECT_EQ(result[0].outputs, "10\n18");
 }
 
+TEST(ParseTestCases, MultiLineNumberFloatIO) {
+  std::vector<test_case> result = parse_test_cases(json::parse(R"(
+        [
+            {
+                "title": "This is a title",
+                "description": "This is a description",
+                "inputs": [
+                  3.0,
+                  3.1,
+                  6.2,
+                  1.3
+                ],
+                "outputs": [
+                  10.4,
+                  18.5
+                ],
+
+                "outputType": "float",
+                "round": 2
+            }
+        ]
+    )"));
+
+  EXPECT_EQ(result[0].inputs, "3.0\n3.1\n6.2\n1.3");
+  EXPECT_EQ(result[0].outputs, "10.0\n18.0");
+}
+
+TEST(ParseTestCases, MultiLineNumberFloatRoundIO) {
+  std::vector<test_case> result = parse_test_cases(json::parse(R"(
+        [
+            {
+                "title": "This is a title",
+                "description": "This is a description",
+                "inputs": [
+                  3.0,
+                  3.1,
+                  6.2,
+                  1.3
+                ],
+                "outputs": [
+                  10.4,
+                  18.5
+                ],
+
+                "outputType": "float",
+                "round": 1
+            }
+        ]
+    )"));
+
+  EXPECT_EQ(result[0].inputs, "3.0\n3.1\n6.2\n1.3");
+  EXPECT_EQ(result[0].outputs, "10.0\n18.0");
+}
+
 TEST(ParseTestCases, MultiLineOtherIO) {
   std::vector<test_case> result = parse_test_cases(json::parse(R"(
         [
