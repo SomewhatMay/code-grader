@@ -4,11 +4,6 @@
 #include <string>
 #include <vector>
 
-enum outputs_t {
-  string_sequence,  // default
-  floating_point
-};
-
 /**
  * Contain the format of a test case as defined
  * in the question files.
@@ -18,9 +13,6 @@ struct test_case {
   std::string description;
   std::string inputs;
   std::string outputs;
-
-  outputs_t outputs_type = outputs_t::string_sequence;
-  int round = 0;
 
   std::string stringify() {
     return "object<test_case>\nTitle: " + title + "\nDesc: " + description +

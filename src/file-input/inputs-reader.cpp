@@ -29,12 +29,8 @@ json read_questions_file(const std::string& question_id) {
 }
 
 zeus::expected<std::string, std::string> parse_io(const json& raw) {
-  if (raw.is_string()) {
-    return raw;
-  } else if (raw.is_number_integer()) {
-    return std::to_string((int)raw);
-  } else if (raw.is_number_float()) {
-    return std::to_string((float)raw);
+  if (raw.is_string() || raw.is_number()) {
+    return raw.is_string() ? std::string(raw) : to_string(raw);
   } else if (raw.is_array()) {
     std::string parsed = "";
 
@@ -43,12 +39,8 @@ zeus::expected<std::string, std::string> parse_io(const json& raw) {
         parsed += '\n';
       }
 
-      if (it->is_string()) {
-        parsed += *it;
-      } else if (it->is_number_integer()) {
-        parsed += std::to_string((int)*it);
-      } else if (it->is_number_float()) {
-        parsed += std::to_string((float)*it);
+      if (it->is_string() || it->is_number()) {
+        parsed += it->is_string() ? std::string(*it) : to_string(*it);
       } else {
         return zeus::unexpected("element " + std::to_string(it - raw.begin()) +
                                 " is unparsable in test case");
@@ -57,7 +49,7 @@ zeus::expected<std::string, std::string> parse_io(const json& raw) {
 
     return parsed;
   } else {
-    return zeus::unexpected("raw is unparsable");
+    return zeus::unexpected("data is unparsable");
   }
 }
 

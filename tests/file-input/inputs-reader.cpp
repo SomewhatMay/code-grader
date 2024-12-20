@@ -103,7 +103,7 @@ TEST(ParseTestCases, MultiLineNumberFloatIO) {
     )"));
 
   EXPECT_EQ(result[0].inputs, "3.0\n3.1\n6.2\n1.3");
-  EXPECT_EQ(result[0].outputs, "10.0\n18.0");
+  EXPECT_EQ(result[0].outputs, "10.4\n18.5");
 }
 
 TEST(ParseTestCases, MultiLineNumberFloatRoundIO) {
@@ -130,7 +130,7 @@ TEST(ParseTestCases, MultiLineNumberFloatRoundIO) {
     )"));
 
   EXPECT_EQ(result[0].inputs, "3.0\n3.1\n6.2\n1.3");
-  EXPECT_EQ(result[0].outputs, "10.0\n18.0");
+  EXPECT_EQ(result[0].outputs, "10.4\n18.5");
 }
 
 TEST(ParseTestCases, MultiLineOtherIO) {
