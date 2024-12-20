@@ -68,7 +68,12 @@
 		"stop_token": "cpp",
 		"thread": "cpp",
 		"cinttypes": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"ranges": "cpp",
+		"valarray": "cpp",
+		"bitset": "cpp",
+		"regex": "cpp",
+		"future": "cpp"
 	},
 	"C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

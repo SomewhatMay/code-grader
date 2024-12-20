@@ -6,6 +6,8 @@
 
 namespace fs = std::filesystem;
 
+// fio --> FileIO
+namespace fio {
 std::vector<std::string> get_question_list() {
   // Change this line to use an absolute or relative path as needed
   std::vector<std::string> question_list;
@@ -20,3 +22,4 @@ std::vector<std::string> get_question_list() {
 
   return question_list;
 }
+}  // namespace fio
