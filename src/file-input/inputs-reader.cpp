@@ -5,11 +5,14 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <zeus/expected.hpp>
 
 using json = nlohmann::json;
 
 namespace fio {
+std::vector<test_case> get_test_cases(const std::string& question_id);
+}
+
+namespace fio_internal {
 json read_questions_file(const std::string& question_id) {
   std::string total_path = std::string(globals::QUESTIONS_PATH) + question_id;
   std::ifstream questions_file(total_path);
@@ -30,9 +33,7 @@ json read_questions_file(const std::string& question_id) {
 }
 
 zeus::expected<std::string, std::string> parse_io(const json& raw) {
-  if (raw.is_string() || raw.is_number()) {
-    return raw.is_string() ? std::string(raw) : to_string(raw);
-  } else if (raw.is_array()) {
+  if (raw.is_array()) {
     std::string parsed = "";
 
     for (auto it = raw.begin(); it != raw.end(); it++) {
@@ -49,13 +50,15 @@ zeus::expected<std::string, std::string> parse_io(const json& raw) {
     }
 
     return parsed;
+  } else if (raw.is_string() || raw.is_number()) {
+    return raw.is_string() ? std::string(raw) : to_string(raw);
   } else {
     return zeus::unexpected("data is unparsable");
   }
 }
 
-test_case parse_test_case(const json& entry) {
-  test_case current_case;
+fio::test_case parse_test_case(const json& entry) {
+  fio::test_case current_case;
   current_case.title = entry.at("title");
 
   current_case.description =
@@ -82,18 +85,13 @@ test_case parse_test_case(const json& entry) {
   return current_case;
 }
 
-std::vector<test_case> parse_test_cases(const json& data) {
-  std::vector<test_case> test_cases;
+std::vector<fio::test_case> parse_test_cases(const json& data) {
+  std::vector<fio::test_case> test_cases;
 
   for (auto& entry : data) {
-    test_case current_case = parse_test_case(entry);
-    test_cases.push_back(current_case);
+    test_cases.push_back(parse_test_case(entry));
   }
 
   return test_cases;
 }
-
-std::vector<test_case> get_test_cases(const std::string& question_id) {
-  return std::vector<test_case>();
-};
-}  // namespace fio
+}  // namespace fio_internal
