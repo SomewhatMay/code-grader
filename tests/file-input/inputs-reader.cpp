@@ -13,10 +13,10 @@ using json = nlohmann::json;
 // using namespace fio;
 
 // parse_io()
-
+namespace {
 TEST(ParseIO, EmptyString) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"(
+      fio::internal::parse_io(json::parse(R"(
       "")"));
 
   EXPECT_TRUE(result.has_value());
@@ -25,7 +25,7 @@ TEST(ParseIO, EmptyString) {
 
 TEST(ParseIO, SpacedString) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"("a b $ d")"));
+      fio::internal::parse_io(json::parse(R"("a b $ d")"));
 
   EXPECT_TRUE(result.has_value());
   EXPECT_EQ(*result, "a b $ d");
@@ -33,7 +33,7 @@ TEST(ParseIO, SpacedString) {
 
 TEST(ParseIO, SpacedNumerics) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"("1 2 3.14 4")"));
+      fio::internal::parse_io(json::parse(R"("1 2 3.14 4")"));
 
   EXPECT_TRUE(result.has_value());
   EXPECT_EQ(*result, "1 2 3.14 4");
@@ -41,7 +41,7 @@ TEST(ParseIO, SpacedNumerics) {
 
 TEST(ParseIO, NewLinedString) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"("a\nb\n$\nd")"));
+      fio::internal::parse_io(json::parse(R"("a\nb\n$\nd")"));
 
   EXPECT_TRUE(result.has_value());
   EXPECT_EQ(*result, "a\nb\n$\nd");
@@ -49,7 +49,7 @@ TEST(ParseIO, NewLinedString) {
 
 TEST(ParseIO, NewLinedNumerics) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"("1\n2\n3.14\n4")"));
+      fio::internal::parse_io(json::parse(R"("1\n2\n3.14\n4")"));
 
   EXPECT_TRUE(result.has_value());
   EXPECT_EQ(*result, "1\n2\n3.14\n4");
@@ -57,7 +57,7 @@ TEST(ParseIO, NewLinedNumerics) {
 
 TEST(ParseIO, ArrayedString) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"(
+      fio::internal::parse_io(json::parse(R"(
     [
       "1",
       "2.1",
@@ -72,7 +72,7 @@ TEST(ParseIO, ArrayedString) {
 
 TEST(ParseIO, ArrayedNumerics) {
   zeus::expected<std::string, std::string> result =
-      fio_internal::parse_io(json::parse(R"([
+      fio::internal::parse_io(json::parse(R"([
       1,
       2.1,
       3,
@@ -82,12 +82,18 @@ TEST(ParseIO, ArrayedNumerics) {
   EXPECT_TRUE(result.has_value());
   EXPECT_EQ(*result, "1\n2.1\n3\n4");
 }
+}  // namespace
 
-// parse_test_cases();
+// parse_test_cas()
+namespace {
+TEST(ParseTestCase, EmptyContents) {}
+}  // namespace
 
+// parse_test_cases()
+namespace {
 TEST(ParseTestCases, SingleLineIO) {
   std::vector<fio::test_case> result =
-      fio_internal::parse_test_cases(json::parse(R"(
+      fio::internal::parse_test_cases(json::parse(R"(
         [
             {
                 "title": "This is a title",
@@ -109,7 +115,7 @@ TEST(ParseTestCases, SingleLineIO) {
 
 TEST(ParseTestCases, MultiLineStringIO) {
   std::vector<fio::test_case> result =
-      fio_internal::parse_test_cases(json::parse(R"(
+      fio::internal::parse_test_cases(json::parse(R"(
         [
             {
                 "title": "This is a title",
@@ -134,7 +140,7 @@ TEST(ParseTestCases, MultiLineStringIO) {
 
 TEST(ParseTestCases, MultiLineNumberIO) {
   std::vector<fio::test_case> result =
-      fio_internal::parse_test_cases(json::parse(R"(
+      fio::internal::parse_test_cases(json::parse(R"(
         [
             {
                 "title": "This is a title",
@@ -159,7 +165,7 @@ TEST(ParseTestCases, MultiLineNumberIO) {
 
 TEST(ParseTestCases, MultiLineNumberFloatIO) {
   std::vector<fio::test_case> result =
-      fio_internal::parse_test_cases(json::parse(R"(
+      fio::internal::parse_test_cases(json::parse(R"(
         [
             {
                 "title": "This is a title",
@@ -187,7 +193,7 @@ TEST(ParseTestCases, MultiLineNumberFloatIO) {
 
 TEST(ParseTestCases, MultiLineNumberFloatRoundIO) {
   std::vector<fio::test_case> result =
-      fio_internal::parse_test_cases(json::parse(R"(
+      fio::internal::parse_test_cases(json::parse(R"(
         [
             {
                 "title": "This is a title",
@@ -215,7 +221,7 @@ TEST(ParseTestCases, MultiLineNumberFloatRoundIO) {
 
 TEST(ParseTestCases, MultiLineOtherIO) {
   std::vector<fio::test_case> result =
-      fio_internal::parse_test_cases(json::parse(R"(
+      fio::internal::parse_test_cases(json::parse(R"(
         [
             {
                 "title": "This is a title",
@@ -242,3 +248,4 @@ TEST(ParseTestCases, MultiLineOtherIO) {
   EXPECT_EQ(result[0].inputs, "");
   EXPECT_EQ(result[0].outputs, "");
 }
+}  // namespace

@@ -1,6 +1,7 @@
-#include <file-input/inputs-reader.h>
+// #include <file-input/inputs-reader.h>
 #include <globals.h>
 
+#include <file-inupt/inputs-reader-internal.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -10,9 +11,10 @@ using json = nlohmann::json;
 
 namespace fio {
 std::vector<test_case> get_test_cases(const std::string& question_id);
-}
 
-namespace fio_internal {
+}  // namespace fio
+
+namespace fio::internal {
 json read_questions_file(const std::string& question_id) {
   std::string total_path = std::string(globals::QUESTIONS_PATH) + question_id;
   std::ifstream questions_file(total_path);
@@ -94,4 +96,4 @@ std::vector<fio::test_case> parse_test_cases(const json& data) {
 
   return test_cases;
 }
-}  // namespace fio_internal
+}  // namespace fio::internal

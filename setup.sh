@@ -10,4 +10,4 @@ fi
 
 git submodule update --init --recursive
 
-echo "Project successfully set up."
+echo "\033[0;32mProject successfully set up."
